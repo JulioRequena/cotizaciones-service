@@ -63,7 +63,7 @@ resource "aws_db_instance" "postgres" {
   engine_version         = "12.22"
   instance_class         = "db.t3.micro"
   allocated_storage      = 20
-  db_name                = "cotizaciones-final"       # <-- CORRECCIÓN: antes 'name'
+  db_name                = "cotizacionesfinal"       # <-- CORRECCIÓN: antes 'name'
   username               = "cot_admin"
   password               = random_password.db.result
   db_subnet_group_name   = aws_db_subnet_group.rds_subnets.name
@@ -89,4 +89,5 @@ resource "aws_secretsmanager_secret_version" "db_secret_value" {
 resource "aws_ecr_repository" "repo" {
   name = "${var.project}-repo"
 }
+
 
