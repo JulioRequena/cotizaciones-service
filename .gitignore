@@ -2,11 +2,13 @@
 node_modules/
 dist/
 
-
-
 # Terraform
-**/.terraform/
-**/.terraform/modules/
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+*.zip
+modules.json
 
 # OS
 *.DS_Store
