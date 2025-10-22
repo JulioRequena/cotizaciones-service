@@ -1,0 +1,1 @@
+{"version":3,"file":"CotizacionController.d.ts","sourceRoot":"","sources":["CotizacionController.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAG5C,qBAAa,oBAAoB;IACnB,OAAO,CAAC,IAAI;IAAO,OAAO,CAAC,WAAW;gBAA9B,IAAI,EAAE,GAAG,EAAU,WAAW,EAAE,GAAG;IAEjD,MAAM,CAAC,GAAG,EAAE,OAAO,EAAE,GAAG,EAAE,QAAQ;CAUzC"}

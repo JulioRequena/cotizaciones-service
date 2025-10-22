@@ -1,0 +1,14 @@
+# Node
+node_modules/
+dist/
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Terraform
+**/.terraform/
+**/.terraform/modules/
+
+# OS
+*.DS_Store

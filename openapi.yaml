@@ -1,0 +1,46 @@
+openapi: 3.0.3
+info:
+  title: Cotizaciones API
+  version: 0.1.0
+paths:
+  /cotizaciones:
+    post:
+      summary: Crear cotización
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CotizacionRequest'
+      responses:
+        '201':
+          description: Cotización creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CotizacionResponse'
+components:
+  schemas:
+    CotizacionRequest:
+      type: object
+      required: [clienteId, vehiculoId, plazoMeses, precio]
+      properties:
+        clienteId:
+          type: string
+        vehiculoId:
+          type: string
+        plazoMeses:
+          type: integer
+        precio:
+          type: number
+        entrada:
+          type: number
+    CotizacionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        cuotaMensual:
+          type: number
+        tasaAnual:
+          type: number
