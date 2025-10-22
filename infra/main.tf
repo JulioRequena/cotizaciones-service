@@ -26,7 +26,7 @@ resource "random_password" "db" {
 # RDS Subnet Group
 # =========================
 resource "aws_db_subnet_group" "rds_subnets" {
-  name       = "${var.project}-rds-subnet"
+  name       = "${var.project}-rds-subnet-final"
   subnet_ids = module.vpc.private_subnets
 }
 
@@ -34,7 +34,7 @@ resource "aws_db_subnet_group" "rds_subnets" {
 # Security Group para RDS
 # =========================
 resource "aws_security_group" "rds_sg" {
-  name        = "${var.project}-rds-sg"
+  name        = "${var.project}-rds-sg-final"
   description = "Allow ECS access to RDS"
   vpc_id      = module.vpc.vpc_id
 
@@ -63,7 +63,7 @@ resource "aws_db_instance" "postgres" {
   engine_version         = "12.22"
   instance_class         = "db.t3.micro"
   allocated_storage      = 20
-  db_name                = "cotizaciones"       # <-- CORRECCIÓN: antes 'name'
+  db_name                = "cotizaciones-final"       # <-- CORRECCIÓN: antes 'name'
   username               = "cot_admin"
   password               = random_password.db.result
   db_subnet_group_name   = aws_db_subnet_group.rds_subnets.name
@@ -89,3 +89,4 @@ resource "aws_secretsmanager_secret_version" "db_secret_value" {
 resource "aws_ecr_repository" "repo" {
   name = "${var.project}-repo"
 }
+
