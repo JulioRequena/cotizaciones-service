@@ -75,7 +75,7 @@ resource "aws_db_instance" "postgres" {
 # Secrets Manager
 # =========================
 resource "aws_secretsmanager_secret" "db_secret" {
-  name = "${var.project}-db-url"
+  name = "${var.project}-db-url-final"
 }
 
 resource "aws_secretsmanager_secret_version" "db_secret_value" {
@@ -87,7 +87,7 @@ resource "aws_secretsmanager_secret_version" "db_secret_value" {
 # ECR Repository
 # =========================
 resource "aws_ecr_repository" "repo" {
-  name = "${var.project}-repo"
+  name = "${var.project}-repo-final"
 }
 
 
