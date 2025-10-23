@@ -10,8 +10,8 @@ module "vpc" {
   public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]
   private_subnets = ["10.0.11.0/24", "10.0.12.0/24"]
 
-  enable_nat_gateway  = true
-  single_nat_gateway  = true
+  enable_nat_gateway = true
+  single_nat_gateway = true
 }
 
 # =========================
@@ -23,17 +23,16 @@ resource "random_password" "db" {
 }
 
 resource "aws_db_subnet_group" "rds_subnets" {
-  name       = "${var.project}-rds-subnet-bam"
+  name       = "${var.project}-rds-subnet"
   subnet_ids = module.vpc.private_subnets
 }
 
 resource "aws_security_group" "rds_sg" {
-  name        = "${var.project}-rds-sg-bam"
+  name        = "${var.project}-rds-sg"
   description = "Allow ECS access to RDS"
   vpc_id      = module.vpc.vpc_id
 
   ingress {
-    description = "Postgres access"
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
@@ -51,10 +50,10 @@ resource "aws_security_group" "rds_sg" {
 resource "aws_db_instance" "postgres" {
   identifier             = "${var.project}-db"
   engine                 = "postgres"
-  engine_version         = "12.22"
+  engine_version         = "12"
   instance_class         = "db.t3.micro"
   allocated_storage      = 20
-  db_name                = "cotizacionesfinal"       # <-- CORRECCIÓN: antes 'name'
+  db_name                = "cotizacionesfinal"
   username               = "cot_admin"
   password               = random_password.db.result
   db_subnet_group_name   = aws_db_subnet_group.rds_subnets.name
@@ -66,7 +65,7 @@ resource "aws_db_instance" "postgres" {
 # Secrets Manager
 # =========================
 resource "aws_secretsmanager_secret" "db_secret" {
-  name = "${var.project}-db-url-bam"
+  name = "${var.project}-db-url"
 }
 
 resource "aws_secretsmanager_secret_version" "db_secret_value" {
@@ -78,15 +77,37 @@ resource "aws_secretsmanager_secret_version" "db_secret_value" {
 # ECR Repository
 # =========================
 resource "aws_ecr_repository" "repo" {
-  name = "${var.project}-repo-bam"
+  name = "${var.project}-repo"
 }
-
 
 # =========================
 # ECS Cluster
 # =========================
 resource "aws_ecs_cluster" "cluster" {
   name = "${var.project}-cluster"
+}
+
+# =========================
+# Security Group para ECS / ALB
+# =========================
+resource "aws_security_group" "ecs_sg" {
+  name        = "${var.project}-ecs-sg"
+  description = "Allow traffic to/from ECS tasks and ALB"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 # =========================
@@ -152,7 +173,7 @@ resource "aws_lb" "alb" {
   name               = "${var.project}-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.rds_sg.id]
+  security_groups    = [aws_security_group.ecs_sg.id]
   subnets            = module.vpc.public_subnets
 }
 
@@ -193,9 +214,9 @@ resource "aws_ecs_service" "service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets         = module.vpc.private_subnets
-    security_groups = [aws_security_group.rds_sg.id]
-    assign_public_ip = true
+    subnets          = module.vpc.private_subnets
+    security_groups  = [aws_security_group.ecs_sg.id]
+    assign_public_ip = false
   }
 
   load_balancer {
